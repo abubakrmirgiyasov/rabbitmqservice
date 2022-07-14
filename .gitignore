@@ -1,0 +1,8 @@
+.dockerignore
+.dcproj
+.override.yml
+.vscode
+.vs
+obj/Docker
+bin/
+obj/
