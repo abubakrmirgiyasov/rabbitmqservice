@@ -11,6 +11,8 @@ namespace ServiceAPI
         private readonly IConnection _connection;
         private readonly IModel _channel;
 
+        public static bool isException = false;
+
         public RabbitMqService()
         {
             try
@@ -20,7 +22,7 @@ namespace ServiceAPI
                     .CreateConnection();
                 _channel = _connection.CreateModel();
 
-                _channel.QueueDeclare( "InboxQueue", true, false, false, null);
+                _channel.QueueDeclare("InboxQueue", true, false, false, null);
 
                 _channel.QueueDeclare("OutboxQueue", true, false, false, null);
 
@@ -28,6 +30,7 @@ namespace ServiceAPI
             catch (BrokerUnreachableException e)
             {
                 Console.WriteLine(e.Message);
+                isException = true;
             }
         }
 
@@ -42,33 +45,43 @@ namespace ServiceAPI
 
         public string Publish(string message)
         {
-            var buffer = Encoding.UTF8.GetBytes(message);
+            if (_channel != null)
+            {
+                var buffer = Encoding.UTF8.GetBytes(message);
 
-            _channel.BasicPublish(
-                exchange: "",
-                routingKey: "InboxQueue",
-                basicProperties: null,
-                body: buffer);
+                _channel.BasicPublish(
+                    exchange: "",
+                    routingKey: "InboxQueue",
+                    basicProperties: null,
+                    body: buffer);
 
-            return message;
+                return message;
+            }
+
+            return "";
         }
 
         public string Received(string queueName, Action<string> handler)
         {
-            var consumer = new EventingBasicConsumer(_channel);
-
-            consumer.Received += (s, e) =>
+            if (_channel != null)
             {
-                var content = Encoding.UTF8.GetString(e.Body.ToArray());
+                var consumer = new EventingBasicConsumer(_channel);
 
-                handler(content);
+                consumer.Received += (s, e) =>
+                {
+                    var content = Encoding.UTF8.GetString(e.Body.ToArray());
 
-                Console.WriteLine(content);
+                    handler(content);
 
-                _channel.BasicAck(e.DeliveryTag, false);
-            };
+                    Console.WriteLine(content);
 
-            return _channel.BasicConsume(queueName, false, consumer);
+                    _channel.BasicAck(e.DeliveryTag, false);
+                };
+
+                return _channel.BasicConsume(queueName, false, consumer);
+            }
+
+            return "";
         }
     }
 }

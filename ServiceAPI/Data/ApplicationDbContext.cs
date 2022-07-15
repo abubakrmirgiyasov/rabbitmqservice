@@ -13,7 +13,7 @@ namespace ServiceAPI
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@"Data Source=D:\Files\ServiceAPI\ServiceAPI\Data\Service.db");
+            optionsBuilder.UseSqlite(@"Data Source=D:\ServiceAPI\ServiceAPI\Data\Service.db");
         }
     }
 }

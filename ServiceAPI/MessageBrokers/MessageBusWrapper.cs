@@ -52,9 +52,8 @@ namespace ServiceAPI
             return data.Id;
         }
 
-        public void ExceptionHandler(string message, string error)
+        public string ExceptionHandler(Service service, string error)
         {
-            var service = JsonSerializer.Deserialize<Service>(message);
             using var context = new ApplicationDbContext();
 
             var data = new Service()
@@ -67,6 +66,8 @@ namespace ServiceAPI
 
             context.Update(data);
             context.SaveChanges();
+
+            return data.Status;
         }
     }
 }

@@ -20,24 +20,21 @@ public class DataTest
     {
         return new Service()
         {
-            Id = Guid.Parse("1643b1ae-cf06-4af3-bd01-9d2ae1ea0529"),
-            Message = "Message 1",
+            Id = Guid.NewGuid(),
+            Message = "qwoiejqwoiej ",
             Status = "In Process",
             CreatedDate = DateTime.Now
         };
     }
 
-    public static List<Service> ExpiredData()
+    public static Service ExpiredData()
     {
-        return new List<Service>()
+        return new Service()
         {
-            new Service()
-            {
-                Id = Guid.Parse("1643b1ae-cf06-4af3-bd01-9d2ae1ea0529"),
-                Message = "Message 1",
-                Status = "Просрочено",
-                CreatedDate = new DateTime(2021, 07, 06, 14, 00, 00)
-            }
+            Message = "Message 1",
+            Status = "Просрочено",
+            CreatedDate = new DateTime(2021, 07, 06, 14, 00, 00)
+
         };
     }
 
